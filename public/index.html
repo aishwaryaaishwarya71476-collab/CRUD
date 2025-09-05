@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Student Fees</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Student Fees Records</h1>
+  <a href="add.html">+ Add Student</a>
+  <table border="1" id="studentTable">
+    <thead>
+      <tr>
+        <th>Name</th><th>Email</th><th>Course</th><th>Fee</th><th>Status</th><th>Action</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadStudents() {
+      const res = await fetch('/api/students');
+      const data = await res.json();
+      const tbody = document.querySelector('#studentTable tbody');
+      tbody.innerHTML = '';
+      data.forEach(s => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${s.name}</td>
+            <td>${s.email || '-'}</td>
+            <td>${s.course || '-'}</td>
+            <td>${s.feeAmount || '-'}</td>
+            <td>${s.feeStatus}</td>
+            <td>
+              <a href="edit.html?id=${s._id}">Edit</a> |
+              <a href="#" onclick="deleteStudent('${s._id}')">Delete</a>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function deleteStudent(id) {
+      if (confirm('Delete this student?')) {
+        await fetch('/api/students/' + id, { method: 'DELETE' });
+        loadStudents();
+      }
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>

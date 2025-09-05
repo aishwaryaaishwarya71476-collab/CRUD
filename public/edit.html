@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Student</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Edit Student</h2>
+  <form id="editForm">
+    <input name="name" id="name" required><br>
+    <input name="email" id="email"><br>
+    <input name="course" id="course"><br>
+    <input type="number" name="feeAmount" id="feeAmount"><br>
+    <select name="feeStatus" id="feeStatus">
+      <option value="Paid">Paid</option>
+      <option value="Pending">Pending</option>
+    </select><br>
+    <button type="submit">Update</button>
+  </form>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    async function loadStudent() {
+      const res = await fetch('/api/students');
+      const students = await res.json();
+      const s = students.find(x => x._id === id);
+      if (s) {
+        document.getElementById('name').value = s.name;
+        document.getElementById('email').value = s.email || '';
+        document.getElementById('course').value = s.course || '';
+        document.getElementById('feeAmount').value = s.feeAmount || '';
+        document.getElementById('feeStatus').value = s.feeStatus;
+      }
+    }
+    loadStudent();
+
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = Object.fromEntries(new FormData(e.target));
+      await fetch('/api/students/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      window.location = '/';
+    });
+  </script>
+</body>
+</html>
