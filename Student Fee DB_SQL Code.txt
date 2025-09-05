@@ -1,0 +1,45 @@
+-- Create Database
+CREATE DATABASE student_fees_db;
+
+USE student_fees_db;
+
+-- Student Table
+CREATE TABLE students (
+    student_id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    course VARCHAR(50) NOT NULL
+);
+
+-- Fees Table
+CREATE TABLE fees (
+    fee_id INT PRIMARY KEY,
+    student_id INT Foreign Key,
+    amount DECIMAL(10,2) NOT NULL,
+    status ENUM('Paid', 'Pending') DEFAULT 'Pending',
+    payment_date DATE,
+);
+
+-- Insert Sample Students
+INSERT INTO students (Student_Id, name, email, course) VALUES
+(1,'Aishwarya', 'aish@example.com', 'Computer Science'),
+(2,'Ravi Kumar', 'ravi@example.com', 'Mechanical'),
+(3,'Sneha Sharma', 'sneha@example.com', 'Electronics');
+
+-- Insert Sample Fees
+INSERT INTO fees (Fee_Id,student_id, amount, status, payment_date) VALUES
+(1001, 1, 20000.00, 'Paid', '2025-08-10'),
+(1002, 2, 18000.00, 'Pending', NULL),
+(1003, 3, 22000.00, 'Paid', '2025-08-20');
+
+-- Read Data
+SELECT s.student_id, s.name, s.course, f.amount, f.status, f.payment_date
+FROM students s
+JOIN fees f ON s.student_id = f.student_id
+Where S.stud_name = 'Aishwarya'
+
+-- Update Fees (mark as Paid)
+UPDATE fees SET status = 'Paid', payment_date = CURDATE() WHERE fee_id = 1002;
+
+-- Delete Fees Record
+DELETE FROM fees WHERE fee_id = 1003;
